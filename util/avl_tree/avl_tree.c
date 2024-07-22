@@ -1,12 +1,72 @@
 #include "avl_tree.h"
-#include <stdlib.h>
+#include <assert.h>
 
 // PRIVATE
 
 #define ABS(A)  ((A < 0) ? (A) : (-(A)))
+#define MAX(A, B) ((A > B) ? (A) : (B))
+
+Node *tallest_child(Node *node) {
+    if (node->left->height > node->right->height) {
+        return node->left;
+    } else {
+        return node->right;
+    }
+}
+
+void set_height(Node *node) {
+    node->height = MAX(node->left->height, node->right->height) + 1;
+}
+
+void rotate_left(Node *node) {
+    Node *parent = node->parent;
+    assert(parent->right == node);
+
+    parent->right = node->left;
+    node->left = parent;
+    node->parent = parent->parent;
+    parent->parent = node;
+
+    set_height(parent);
+    set_height(node);
+}
+
+void rotate_right(Node *node) {
+    Node *parent = node->parent;
+    assert(parent->left == node);
+
+    parent->left = node->right;
+    node->right = parent;
+    node->parent = parent->parent;
+    parent->parent = node;
+
+    set_height(parent);
+    set_height(node);
+}
 
 Node *restructure(Node *node) {
+    Node *child = tallest_child(node);
+    Node *grandchild = tallest_child(child);
 
+    if (node->left == child) {
+        if (child->left == grandchild) {
+            rotate_right(child);
+            return child;
+        } else {
+            rotate_left(grandchild);
+            rotate_right(grandchild);
+            return grandchild;
+        }
+    } else {
+        if (child->left == grandchild) {
+            rotate_right(grandchild);
+            rotate_left(grandchild);
+            return grandchild;
+        } else {
+            rotate_left(child);
+            return child;
+        }
+    }
 }
 
 void balance(Node *node) {
@@ -14,9 +74,7 @@ void balance(Node *node) {
         node = node->parent;
         if (ABS(node->left->height - node->right->height) > 1) {
             node = restructure(node);
-        } else {
-            return;
-        }
+        } 
     }
 }
 
