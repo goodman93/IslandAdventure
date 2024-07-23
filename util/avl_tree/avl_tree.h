@@ -8,19 +8,27 @@ typedef struct NodeStruct {
     struct NodeStruct *parent;
     struct NodeStruct *left;
     struct NodeStruct *right;
-
-    void *data;
 } Node;
 
 typedef struct AVLTreeStruct {
     Node *root;
-    int (*compare)(void *self, void *other);
 } AVLTree;
 
-AVLTree *AVLTREE_create(int (*compare)(void *self, void *other));
-void AVLTREE_destroy(void (*destroy)(void *data));
-void *AVLTree_get(AVLTree *tree, void *data);
-void *AVLTree_add(AVLTree *tree, void *data);
-void *AVLTree_remove(AVLTree *tree, void *data);
+#define NODE_LEFT(N)    ((N)->left)
+#define NODE_RIGHT(N)   ((N)->right)
+#define NODE_PARENT(N)  ((N)->parent)
+#define NODE_ROOT(N)         ((((N)->parent) == NULL) ? 1 : 0)
+
+Node *AVLTREE_create_node(Node *parent, Node *left, Node *right);
+
+/**
+ * Rebalances the subtree rooted at the given node and returns the new
+ * root of the subtree.
+ * @param node The root of the subtree that needs to be restructured
+ * @return The new root of the subtree
+ */
+Node *AVLTREE_restructure(Node *node);
+
+AVLTree *AVLTREE_create_tree();
 
 #endif
