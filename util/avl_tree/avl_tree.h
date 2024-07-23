@@ -22,12 +22,10 @@ typedef struct AVLTreeStruct {
 Node *AVLTREE_create_node(Node *parent, Node *left, Node *right);
 
 /**
- * Rebalances the subtree rooted at the given node and returns the new
- * root of the subtree.
- * @param node The root of the subtree that needs to be restructured
- * @return The new root of the subtree
+ * Rebalances the AVLTree up to the root starting from the given node.
+ * @param node Node to begin rebalancing
  */
-Node *AVLTREE_restructure(Node *node);
+void rebalance(Node *node);
 
 AVLTree *AVLTREE_create_tree();
 

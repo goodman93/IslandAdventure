@@ -1,7 +1,10 @@
 #include "avl_tree.h"
 #include <assert.h>
 
-#define TALLER_CHILD(N)     (((N)->left->height) > ((N)->right->height) ? (N)->left : (N)->right)
+#define HEIGHT(N)           ((N) ? (N)->height : -1)
+#define MAX(A, B)           (((A) > (B)) ? (A) : (B))
+#define MIN(A, B)           (((A) < (B)) ? (A) : (B))
+#define TALLER_CHILD(N)     ((HEIGHT((N)->left)) > (HEIGHT((N)->right)) ? (N)->left : (N)->right)
 
 void rotate_left(Node *node) {
     Node *parent = NODE_PARENT(node);
@@ -12,8 +15,8 @@ void rotate_left(Node *node) {
     NODE_RIGHT(parent) = NODE_LEFT(node);
     NODE_LEFT(node) = parent;
 
-    parent->height = TALLER_CHILD(parent)->height + 1;
-    node->height = TALLER_CHILD(node)->height + 1;
+    parent->height = HEIGHT(TALLER_CHILD(parent)) + 1;
+    node->height = HEIGHT(TALLER_CHILD(node)) + 1;
 }
 
 void rotate_right(Node *node) {
@@ -29,7 +32,7 @@ void rotate_right(Node *node) {
     node->height = TALLER_CHILD(node)->height + 1;
 }
 
-Node *AVLTREE_restructure(Node *node) {
+Node *restructure(Node *node) {
     Node *child = TALLER_CHILD(node);
     Node *grandchild = TALLER_CHILD(child);
 
@@ -69,4 +72,13 @@ AVLTree *AVLTREE_create_tree() {
     tree->root = NULL;
 
     return tree;
+}
+
+void rebalance(Node *node) {
+    while (!NODE_ROOT(node)) {
+        if (MAX(HEIGHT(node->left), HEIGHT(node->right)) - MIN(HEIGHT(node->left), HEIGHT(node->right)) > 1) {
+            restructure(node);
+        }
+        node = NODE_PARENT(node);
+    }
 }
