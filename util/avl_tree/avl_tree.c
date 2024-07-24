@@ -34,11 +34,47 @@ Node *taller_child(Node *node) {
 }
 
 void rotate_left(Node *child, Node *parent) {
-    
+    if (parent->parent) {
+        if (parent->parent->left == parent) {
+            parent->parent->left = child;
+        } else {
+            parent->parent->right = child;
+        }
+    }
+
+    child->parent = parent->parent;
+    parent->parent = child;
+
+    parent->right = child->left;
+    child->left = parent;
+
+    parent->right->parent = parent;
+    child->left->parent = child;
+
+    parent->height = MAX(LEFT_HEIGHT(parent), RIGHT_HEIGHT(parent)) + 1;
+    child->height = MAX(LEFT_HEIGHT(child), RIGHT_HEIGHT(child)) + 1;
 }
 
 void rotate_right(Node *child, Node *parent) {
+    if (parent->parent) {
+        if (parent->parent->left == parent) {
+            parent->parent->left = child;
+        } else {
+            parent->parent->right = child;
+        }
+    }
 
+    child->parent = parent->parent;
+    parent->parent = child;
+
+    parent->left = child->right;
+    child->right = parent;
+
+    parent->left->parent = parent;
+    child->right->parent = child;
+
+    parent->height = MAX(LEFT_HEIGHT(parent), RIGHT_HEIGHT(parent)) + 1;
+    child->height = MAX(LEFT_HEIGHT(child), RIGHT_HEIGHT(child)) + 1;
 }
 
 Node *restructure(Node *node) {
@@ -47,26 +83,32 @@ Node *restructure(Node *node) {
 
     if (node->left == child) {
         if (child->left == grandchild) {
-
+            rotate_right(child, node);
+            return child;
         } else {
-
+            rotate_left(grandchild, child);
+            rotate_right(grandchild, node);
+            return grandchild;
         }
     } else {
         if (child->left == grandchild) {
-
+            rotate_right(grandchild, child);
+            rotate_left(grandchild, node);
+            return grandchild;
         } else {
-
+            rotate_left(child, node);
+            return child;
         }
     }
 }
 
 void rebalance(Node *node) {
     while (node) {
+        node->height = MAX(LEFT_HEIGHT(node), RIGHT_HEIGHT(node)) + 1;
         if (MAX(LEFT_HEIGHT(node), RIGHT_HEIGHT(node)) - MIN(LEFT_HEIGHT(node), RIGHT_HEIGHT(node)) > 1) {
             node = restructure(node);
-        } else {
-            node = node->parent;
         }
+        node = node->parent;
     }
 }
 
