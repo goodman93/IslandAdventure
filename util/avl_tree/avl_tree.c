@@ -21,16 +21,38 @@ Node *create_node(Node *parent) {
 }
 
 Node *taller_child(Node *node) {
-    size_t lh = 0;
-    size_t rh = 0;
-    if (node->left) {
-        lh = node->left->height;
-    }
-    if (node->right) {
-        rh = node->right->height;
-    }
+    if (!(node->left) && !(node->right)) {
+        return NULL;
+    } else if (node->left && !(node->right)) {
+        return node->left;
+    } else if (!(node->left) && node->right) {
+        return node->right;
+    } else {
+        return (node->right > node->left) ? (node->right) : (node->left);
+    } 
+}
 
-    return rh > lh ? node->right : node->left;
+size_t height_diff(Node *node) {
+    if (node->left) {
+        if (node->right) {
+            return node->left->height - node->right->height;
+        } else {
+            return node->left->height + 1;
+        }
+    } else if (node->right) {
+        return node->right->height + 1;
+    } else {
+        return 0;
+    }
+}
+
+void update_height(Node *node) {
+    Node *taller = taller_child(node);
+    if (taller) {
+        node->height = taller->height + 1;
+    } else {
+        node->height = 0;
+    }
 }
 
 void rotate_left(Node *child, Node *parent) {
@@ -51,8 +73,8 @@ void rotate_left(Node *child, Node *parent) {
     parent->right->parent = parent;
     child->left->parent = child;
 
-    parent->height = MAX(LEFT_HEIGHT(parent), RIGHT_HEIGHT(parent)) + 1;
-    child->height = MAX(LEFT_HEIGHT(child), RIGHT_HEIGHT(child)) + 1;
+    update_height(parent);
+    update_height(child);
 }
 
 void rotate_right(Node *child, Node *parent) {
@@ -73,8 +95,8 @@ void rotate_right(Node *child, Node *parent) {
     parent->left->parent = parent;
     child->right->parent = child;
 
-    parent->height = MAX(LEFT_HEIGHT(parent), RIGHT_HEIGHT(parent)) + 1;
-    child->height = MAX(LEFT_HEIGHT(child), RIGHT_HEIGHT(child)) + 1;
+    update_height(parent);
+    update_height(child);
 }
 
 Node *restructure(Node *node) {
@@ -104,8 +126,8 @@ Node *restructure(Node *node) {
 
 void rebalance(Node *node) {
     while (node) {
-        node->height = MAX(LEFT_HEIGHT(node), RIGHT_HEIGHT(node)) + 1;
-        if (MAX(LEFT_HEIGHT(node), RIGHT_HEIGHT(node)) - MIN(LEFT_HEIGHT(node), RIGHT_HEIGHT(node)) > 1) {
+        update_height(node);
+        if (height_diff(node) > 1) {
             node = restructure(node);
         }
         node = node->parent;

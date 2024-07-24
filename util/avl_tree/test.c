@@ -18,6 +18,21 @@ void test1(AVLTree *t) {
     assert(root->left == NULL);
     assert(root->right == NULL);
     assert(root->parent == NULL);
+
+    AVLTree_add(t, "banana");
+
+    Node *n1 = root->right;
+    assert(t->compare(root->data, "apple") == 0);
+    assert(root->height == 1);
+    assert(root->left == NULL);
+    assert(root->right == n1);
+    assert(root->parent == NULL);
+
+    assert(t->compare(n1->data, "banana") == 0);
+    assert(n1->height == 0);
+    assert(n1->left == NULL);
+    assert(n1->right == NULL);
+    assert(n1->parent == root);
 }
 
 int main() {
