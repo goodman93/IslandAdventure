@@ -8,25 +8,19 @@ typedef struct NodeStruct {
     struct NodeStruct *parent;
     struct NodeStruct *left;
     struct NodeStruct *right;
+
+    void *data;
 } Node;
 
 typedef struct AVLTreeStruct {
+    int (*compare)(void *self, void *other);
     Node *root;
 } AVLTree;
 
-#define NODE_LEFT(N)    ((N)->left)
-#define NODE_RIGHT(N)   ((N)->right)
-#define NODE_PARENT(N)  ((N)->parent)
-#define NODE_ROOT(N)         ((((N)->parent) == NULL) ? 1 : 0)
-
-Node *AVLTREE_create_node(Node *parent, Node *left, Node *right);
-
-/**
- * Rebalances the AVLTree up to the root starting from the given node.
- * @param node Node to begin rebalancing
- */
-void rebalance(Node *node);
-
-AVLTree *AVLTREE_create_tree();
+AVLTree *AVLTREE_create(int (*compare)(void *self, void *other));
+void AVLTREE_destroy(AVLTree *tree, void (*destroy)(void *data));
+void *AVLTree_get(AVLTree *tree, void *data);
+void *AVLTree_add(AVLTree *tree, void *data);
+void *AVLTree_remove(AVLTree *tree, void *data);
 
 #endif
