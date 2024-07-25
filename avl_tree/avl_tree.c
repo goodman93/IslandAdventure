@@ -14,6 +14,28 @@ size_t height_diff(Node *node) {
     return (h1 > h2) ? (h1 - h2) : (h2 - h1);
 }
 
+void rotate_left(Node *node) {
+    Node *p = node->parent;
+
+    node->parent = p->parent;
+    p->parent = node;
+    p->right = node->left;
+    node->left = p;
+    p->right->parent = p;
+    node->left->parent = node;
+}
+
+void rotate_right(Node *node) {
+    Node *p = node->parent;
+
+    node->parent = p->parent;
+    p->parent = node;
+    p->left = node->right;
+    node->right = p;
+    p->left->parent = p;
+    node->right->parent = node;
+}
+
 Node *restructure(Node *node) {
     Node *z = node;
     Node *y = taller_child(z);
@@ -21,15 +43,21 @@ Node *restructure(Node *node) {
 
     if (z->left == y) {
         if (y->left == x) {
-
+            rotate_right(y);
+            return y;
         } else {
-
+            rotate_left(x);
+            rotate_right(x);
+            return x;
         }
     } else {
         if (y->left == x) {
-
+            rotate_right(x);
+            rotate_left(x);
+            return x;
         } else {
-
+            rotate_left(y);
+            return y;
         }
     }
 }
