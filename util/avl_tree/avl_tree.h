@@ -12,15 +12,14 @@ typedef struct NodeStruct {
     void *data;
 } Node;
 
-typedef struct AVLTreeStruct {
-    int (*compare)(void *self, void *other);
+typedef struct TreeStruct {
     Node *root;
-} AVLTree;
+    int (*compare)(void *self, void *other);
+} Tree;
 
-AVLTree *AVLTREE_create(int (*compare)(void *self, void *other));
-void AVLTREE_destroy(AVLTree *tree, void (*destroy)(void *data));
-void *AVLTree_get(AVLTree *tree, void *data);
-void *AVLTree_add(AVLTree *tree, void *data);
-void *AVLTree_remove(AVLTree *tree, void *data);
+Tree *AVL_create(int (*compare)(void *self, void *other));
+void *AVL_add(Tree *t, void *data);
+void *AVL_remove(Tree *t, void *data);
+void *AVL_get(Tree *t, void *data);
 
 #endif
