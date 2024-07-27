@@ -143,4 +143,6 @@ void *AVL_add(Tree *t, void *data) {
 
 void *AVL_remove(Tree *t, void *data);
 
-void *AVL_get(Tree *t, void *data);
+void *AVL_get(Tree *t, void *data) {
+    return find(t, data)->data;
+}
