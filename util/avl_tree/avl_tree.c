@@ -1,4 +1,5 @@
 #include "avl_tree.h"
+#include <assert.h>
 
 // PRIVATE
 
@@ -19,6 +20,10 @@ void set_height(Node *node) {
 }
 
 Node *in_order_successor(Node *node) {
+    if (!node->right->data) {
+        return NULL;
+    }
+
     Node *it = node->right;
     while (it->left->data) {
         it = it->left;
@@ -141,7 +146,31 @@ void *AVL_add(Tree *t, void *data) {
     return old_data;
 }
 
-void *AVL_remove(Tree *t, void *data);
+void *AVL_remove(Tree *t, void *data) {
+    Node *remove = find(t, data);
+    Node *successor = in_order_successor(remove);
+    void *old_data = remove->data;
+
+    if (successor) {
+        assert(successor->left->data == NULL);
+        assert(successor->right->data == NULL);
+        Node *leaf = successor->parent;
+        remove->data = successor->data;
+        free(successor->left);
+        free(successor->right);
+        free(successor->parent);
+        free(successor->data);
+        free(successor);
+        balance(t, leaf);
+    } else {
+        assert(remove->right->data == NULL);
+        if (remove->left->data) {
+            // TODO: Working on remove()
+        } else {
+
+        }
+    }
+}
 
 void *AVL_get(Tree *t, void *data) {
     return find(t, data)->data;
