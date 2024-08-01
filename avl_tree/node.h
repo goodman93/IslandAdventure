@@ -20,21 +20,13 @@ typedef struct NodeStruct {
 Node *create_node(Node *parent);
 
 /**
- * Rotate node a 'over' node b to the left. Node a must be the
- * right child of node b, and both nodes must be non null.
- * @param a Node to rotate up the tree
- * @param b Parent of a
- * @return Node a, now the root of the subtree
+ * Iteratively checks the balance of each node all the way up to the root 
+ * node, restructuring wherever there are height imbalances.
+ * @param node First node to balance
  */
+void balance(Node *node);
+Node *restructure(Node *node);
 Node *rotate_left(Node *a, Node *b);
-
-/**
- * Rotate node a 'over' node b to the right. Node a must be the
- * left child of node b, and both nodes must be non null.
- * @param a Node to rotate up the tree
- * @param b Parent of a
- * @return Node a, now the root of the subtree
- */
 Node *rotate_right(Node *a, Node *b);
 
 #endif

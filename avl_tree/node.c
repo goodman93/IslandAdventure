@@ -37,6 +37,13 @@
  */
 #define UPDATE_HEIGHT(N)        ((N)->height = HEIGHT(TALLER_CHILD(N)) + 1)
 
+/**
+ * Rotate node a 'over' node b to the left. Node a must be the
+ * right child of node b, and both nodes must be non null.
+ * @param a Node to rotate up the tree
+ * @param b Parent of a
+ * @return Node a, now the root of the subtree
+ */
 Node *rotate_left(Node *a, Node *b) {
     assert(b->right == a);
     if (b->parent) {
@@ -61,6 +68,13 @@ Node *rotate_left(Node *a, Node *b) {
     return a;
 }
 
+/**
+ * Rotate node a 'over' node b to the right. Node a must be the
+ * left child of node b, and both nodes must be non null.
+ * @param a Node to rotate up the tree
+ * @param b Parent of a
+ * @return Node a, now the root of the subtree
+ */
 Node *rotate_right(Node *a, Node *b) {
     assert(b->left == a);
     if (b->parent) {
@@ -85,6 +99,33 @@ Node *rotate_right(Node *a, Node *b) {
     return a;
 }
 
+/**
+ * Balances the subtree rooted at the given node by calling 
+ * left and right rotations. Returns the new root of the subtree.
+ * @param node Root of the subtree to restructure
+ * @return Pointer to the root of the subtree after restructure
+ */
+Node *restructure(Node *node) {
+    Node *z = node;
+    Node *y = TALLER_CHILD(z);
+    Node *x = TALLER_CHILD(y);
+
+    if (IS_LEFT_CHILD(y)) {
+        if (IS_LEFT_CHILD(x)) {
+            return rotate_right(y, z);
+        } else {
+            return rotate_right(rotate_left(x, y), z);
+        }
+    } else {
+        if (IS_LEFT_CHILD(x)) {
+            return rotate_left(rotate_right(x, y), z);
+        } else {
+            return rotate_left(y, z);
+        }
+    }
+}
+
+
 Node *create_node(Node *parent) {
     Node *node = (Node *) malloc(sizeof(Node));
     node->parent = parent;
@@ -96,13 +137,19 @@ Node *create_node(Node *parent) {
     return node;
 }
 
-Node *trinode_restructure(Node *node) {
-
-}
-
 void balance(Node *node) {
-    do {
+    while (node->parent) {
         UPDATE_HEIGHT(node);
-        if 
+        if (HEIGHT_DIFF(node) > 1) {
+            node = restructure(node);
+        } else {
+            node = node->parent;
+        }
+    }
+
+    assert(node->parent == NULL);
+    UPDATE_HEIGHT(node);
+    if (HEIGHT_DIFF(node) > 1) {
+        restructure(node);
     }
 }
