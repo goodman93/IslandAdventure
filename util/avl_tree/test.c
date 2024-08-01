@@ -1,4 +1,5 @@
 #include "avl_tree.h"
+#include <stdio.h>
 #include <assert.h>
 #include <string.h>
 
@@ -156,6 +157,33 @@ void test_add(Tree *t) {
     assert(n5->left != NULL);
     assert(n5->right != NULL);
     assert(n5->parent == n2);
+
+    AVL_add(t, "acorn");
+    root = t->root;
+    n1 = root->left;
+    n2 = root->right;
+    n3 = n1->left;
+    n4 = n1->right;
+    n5 = n2->left;
+    Node *n6 = n2->right;
+
+    assert(t->compare(root->data, "apricot") == 0);
+    assert(root->height == 3);
+    assert(root->left == n1);
+    assert(root->right == n2);
+    assert(root->parent == NULL);
+
+    assert(t->compare(n1->data, "almond") == 0);
+    assert(root->height == 2);
+    assert(root->left == n3);
+    assert(root->right == n4);
+    assert(root->parent == root);
+
+    assert(t->compare(root->data, "banana") == 0);
+    assert(root->height == 2);
+    assert(root->left == n5);
+    assert(root->right == n6);
+    assert(root->parent == root);
 }
 
 int main() {

@@ -1,4 +1,5 @@
 #include "avl_tree.h"
+#include <stdbool.h>
 #include <assert.h>
 
 // PRIVATE
@@ -35,6 +36,14 @@ Node *in_order_successor(Node *node) {
 void rotate_left(Node *node) {
     Node *p = node->parent;
 
+    if (p->parent) {
+        if (p->parent->left == p) {
+            p->parent->left = node;
+        } else {
+            p->parent->right = node;
+        }
+    }
+
     node->parent = p->parent;
     p->parent = node;
     p->right = node->left;
@@ -48,6 +57,14 @@ void rotate_left(Node *node) {
 
 void rotate_right(Node *node) {
     Node *p = node->parent;
+
+    if (p->parent) {
+        if (p->parent->left == p) {
+            p->parent->left = node;
+        } else {
+            p->parent->right = node;
+        }
+    }
 
     node->parent = p->parent;
     p->parent = node;
